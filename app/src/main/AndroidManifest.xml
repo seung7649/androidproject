@@ -17,8 +17,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity">
-
-            <!-- Main 에서도 시작 할 수 있게 함 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

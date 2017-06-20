@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "461856630187",
+    "firebase_url": "https://appdata-5381e.firebaseio.com",
+    "project_id": "appdata-5381e",
+    "storage_bucket": "appdata-5381e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461856630187:android:844475cd2468b481",
+        "android_client_info": {
+          "package_name": "com.example.seung.labhelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461856630187-10dtltmeqgjcs5eoofie6op5vr7l653i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQkYIkzFCSWDmu90-2IE0h5Jbuz0_tr9M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

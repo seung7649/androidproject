@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="대학원 못다한 이야기"
+        android:background="#87CEEB"
         android:textColor="#ffffff"
         android:id="@+id/main_actionbar"
         android:textSize="30dp"/>

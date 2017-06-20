@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="생화학 연구실"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
+        android:background="#87CEEB"
         android:id="@+id/lab_actionbar"
         android:textSize="25dp"
         tools:ignore="HardcodedText,SpUsage" />

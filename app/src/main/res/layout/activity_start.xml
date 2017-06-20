@@ -94,7 +94,7 @@
             android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="킹고 인증"
+            android:text="1.킹고 인증"
             android:textSize="20dp"/>
 
 
@@ -148,22 +148,25 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/editText3"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:ems="15"
-            android:inputType="text"
-            android:text="" />
+            android:text="2.구글 인증"
+            android:textSize="20dp"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/authbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></com.google.android.gms.common.SignInButton>
+
 
         <TextView
             android:id="@+id/textView11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="15dp"
-            android:text="인증번호가 도착하지 않은 경우,\n보내기 버튼을 다시 눌러주세요"
+            android:text="1 또는 2로 인증해주세요.\n인증번호가 도착하지 않은 경우,\n보내기 버튼을 다시 눌러주세요"
             android:textSize="15dp"/>
 
 
