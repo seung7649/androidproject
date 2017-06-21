@@ -1,5 +1,4 @@
 package com.example.seung.labhelper;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,14 +15,14 @@ import java.util.ArrayList;
  * Created by seung on 2017-06-20.
  */
 
-public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickListener {
+public class ListViewBtnAdapter2 extends ArrayAdapter implements View.OnClickListener {
     public interface  ListBtnClickListener{
         void onListBtnClick(int position);
     }
     int resourcId;
-    private ListBtnClickListener listBtnClickListener;
+    private com.example.seung.labhelper.ListViewBtnAdapter.ListBtnClickListener listBtnClickListener;
 
-    ListViewBtnAdapter(Context context, int resource, ArrayList<ListViewItem>list, ListBtnClickListener clickListener){
+    ListViewBtnAdapter2(Context context, int resource, ArrayList<ListViewItem2>list, com.example.seung.labhelper.ListViewBtnAdapter.ListBtnClickListener clickListener){
         super(context ,resource, list);
 
         this.resourcId=resource;
@@ -42,13 +41,13 @@ public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickList
         }
 
         final TextView nameView = (TextView)convertView.findViewById(R.id.item_name);
-        final TextView pronameView = (TextView) convertView.findViewById(R.id.item_proname);
+        //final TextView pronameView = (TextView) convertView.findViewById(R.id.item_proname);
         final TextView majorView = (TextView)convertView.findViewById(R.id.item_major);
 
-        final ListViewItem listViewItem = (ListViewItem)getItem(position);
+        final ListViewItem2 listViewItem = (ListViewItem2)getItem(position);
 
         nameView.setText(listViewItem.getName());
-        pronameView.setText(listViewItem.getProname());
+        //pronameView.setText(listViewItem.getProname());
         majorView.setText(listViewItem.getMajor());
 
         Button button = (Button)convertView.findViewById(R.id.linklab);

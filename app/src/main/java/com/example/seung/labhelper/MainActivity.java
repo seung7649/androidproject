@@ -20,12 +20,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity  implements  ListViewBtnAdapter.ListBtnClickListener{
+public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapter.ListBtnClickListener{
 
     ScrollView scrollView;
+    ArrayList<ListViewItem> items_lab;
+    ArrayList<ListViewItem2> items_insti;
+    ListViewBtnAdapter adapter_lab;
+    ListViewBtnAdapter2 adapter_insti;
+    ListView listview_lab;
+    ListView listview_insti;
 
-
-    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
     private TabHost mytabs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +60,7 @@ public class MainActivity extends AppCompatActivity  implements  ListViewBtnAdap
         tabHost1.addTab(ts2);
 
         mytabs= tabHost1;
-            mytabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-                @Override
-                public void onTabChanged(String tabId) {
-                    //Log.i("***Selected Tab", "Im currently in tab with index::" + mytabs.getCurrentTab());
-                    //LAB 선택하면 tag=0 연구실 선택하면 tag=1
-                    //여기서 어떤 key로 로드 할 지 선택하자
-                }
-            });
+
 
         //스크롤 뷰 사용
         scrollView = (ScrollView)findViewById(R.id.scrollView1);
@@ -69,43 +68,84 @@ public class MainActivity extends AppCompatActivity  implements  ListViewBtnAdap
 
 
         // 데이터 베이스에서 읽어올 준비
-        ListView listview;
-        ListViewBtnAdapter adapter;
-        ArrayList<ListViewItem> items = new ArrayList<ListViewItem>();
+
+        items_lab = new ArrayList<ListViewItem>();
+        items_insti = new ArrayList<ListViewItem2>();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+
 
         //item 로드
         //LAB 탭인지 연구실 탭인지
-        loadItemsFormDB(items,mytabs.getCurrentTab());
+        loadItemsFormDB(0);
+
+        mytabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                //Log.i("***Selected Tab", "Im currently in tab with index::" + mytabs.getCurrentTab());
+                //LAB 선택하면 tag=0 연구실 선택하면 tag=1
+                //여기서 어떤 key로 로드 할 지 선택하자
+                if(mytabs.getCurrentTab()==0)return;
+                loadItemsFormDB(mytabs.getCurrentTab());
+            }
+        });
 
         //Adapter 생성
-        adapter = new ListViewBtnAdapter(this, R.layout.list, items, this);
-
+        //adapter_lab = new ListViewBtnAdapter(this, R.layout.list, items_lab, this);
+       // adapter_insti= new ListViewBtnAdapter2(this, R.layout.list,items_insti,this);
         //리스트뷰 참조 및 Adapter 달기
-        listview=(ListView)findViewById(R.id.listview1);
-        listview.setAdapter(adapter);
+        //listview_lab=(ListView)findViewById(R.id.listview1);
+        //listview_insti=(ListView)findViewById(R.id.listview2);
+        //listview_lab.setAdapter(adapter_lab);
+        //listview_insti.setAdapter(adapter_insti);
+        adapter_lab = new ListViewBtnAdapter(this, R.layout.list, items_lab, this);
+        listview_lab=(ListView)findViewById(R.id.listview1);
+        listview_lab.setAdapter(adapter_lab);
+        adapter_insti= new ListViewBtnAdapter2(this, R.layout.list,items_insti,this);
+        listview_insti=(ListView)findViewById(R.id.listview2);
+        listview_insti.setAdapter(adapter_insti);
+
 
 
     }
 
-    private void loadItemsFormDB(ArrayList<ListViewItem> items, int index) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    private boolean loadItemsFormDB(int index) {
         DatabaseReference mRef;
         TextView textView;
-
+        int cnt1=19;//# of lab
+        int cnt2=5;//# of insti
+        int i=1;
         //탭 버튼에 따라 달라지게
         switch(index){
             case 0:{
-                mRef=mDatabase.child("lab_id");
 
+            mRef=databaseReference.child("labid");
                 //database 에서 읽어오기
-                mRef.child("cnt").addListenerForSingleValueEvent(
-                        new ValueEventListener() {
+                while(i<(cnt1+1)){
+                    final ListViewItem listViewItem = new ListViewItem();
+                    listViewItem.setKey("lab"+i);
+                    mRef.child("lab"+i).child("curnum").addValueEventListener(
+                            new ValueEventListener() {
+                               @Override
+                               public void onDataChange(DataSnapshot dataSnapshot) {
+                                   String temp = dataSnapshot.getValue(String.class);
+                                   if(temp==null) Log.i("here","sh");
+                                   listViewItem.setCurnum(temp);
+                               }
+
+                               @Override
+                               public void onCancelled(DatabaseError databaseError) {
+
+                               }
+                           }
+                    );
+                    mRef.child("lab"+i).child("fivea").addValueEventListener(
+                            new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 String temp = dataSnapshot.getValue(String.class);
-                                if(temp!=null){
-                                   // Log.i("read well", temp);
-                                }
+                                listViewItem.setFive_a(temp);
                             }
 
                             @Override
@@ -113,33 +153,371 @@ public class MainActivity extends AppCompatActivity  implements  ListViewBtnAdap
 
                             }
                         }
-                );
-            }break;
+                    );
+                    mRef.child("lab"+i).child("fiveb").addValueEventListener(
+                            new ValueEventListener() {
+                             @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String temp = dataSnapshot.getValue(String.class);
+                                 listViewItem.setFive_b(temp);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                             }
+                        }
+                    );
+                    mRef.child("lab"+i).child("fivec").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setFive_c(temp);
+                             }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                        }
+                    );
+                    mRef.child("lab"+i).child("fived").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setFive_d(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("fivee").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setFive_e(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("keyword").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setMajor(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("labname").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setName(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lasta").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_a(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lastb").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_b(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lastc").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_c(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lastd").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_d(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("laste").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_e(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lastinstinum").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_inst_num(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("lasttotalnum").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setLast_total_num(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("proname").addValueEventListener(
+                            new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String temp = dataSnapshot.getValue(String.class);
+                        listViewItem.setProname(temp);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+                    );
+                    mRef.child("lab"+i).child("url").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setUrl(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    items_lab.add(listViewItem);
+                i++;
+                }
+
+
+           }break;
             case 1:{
-                mRef=mDatabase.child("insti_id");
+                mRef=databaseReference.child("instiid");
+
+                i=1;
                 //database에서 읽어오기
-                mRef.child("cnt").addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                String temp = dataSnapshot.getValue(String.class);
-                                if(temp!=null){
-                                    Log.i("read well", temp);
+                while(i<(cnt2+1)){
+                    final ListViewItem2 listViewItem = new ListViewItem2();
+                    listViewItem.setKey("insti"+i);
+                    mRef.child("insti"+i).child("addr").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    if(temp==null) Log.i("here","sh");
+                                    listViewItem.setAddr(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
                                 }
                             }
+                    );
+                    mRef.child("insti"+i).child("duration").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setDuration(temp);
+                                }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
+                                }
                             }
-                        }
-                );
+                    );
+                    mRef.child("insti"+i).child("instiname").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setName(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("lastfromlab").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setLastfromlab(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("lasttotal").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setLasttotal(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("major").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setMajor(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("pay").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setPay(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("required").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setRequired(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    mRef.child("insti"+i).child("url").addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String temp = dataSnapshot.getValue(String.class);
+                                    listViewItem.setUrl(temp);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            }
+                    );
+                    items_insti.add(listViewItem);
+                    i++;
+                }
+
+
+
+
             }break;
             default:{
                 Toast.makeText(this, "index error : "+index, Toast.LENGTH_SHORT).show();
             }break;
         }
-
+       return  true;
     }
 
     public void onbutton4Clicked(View v){
@@ -156,6 +534,7 @@ public class MainActivity extends AppCompatActivity  implements  ListViewBtnAdap
     public void onListBtnClick(int position) {
         Toast.makeText(this, Integer.toString(position+1)+"Item is selected", Toast.LENGTH_SHORT).show();
     }
+
 
 
 }
