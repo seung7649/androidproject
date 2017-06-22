@@ -1,11 +1,9 @@
 package com.example.seung.labhelper;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TabHost;
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
+
         setContentView(R.layout.activity_main);
 
         //Tab 사용
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
 
         //item 로드
         //LAB 탭인지 연구실 탭인지
-        loadItemsFormDB(0);
+        loadItemsFormDB(mytabs.getCurrentTab());
 
         mytabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
@@ -90,6 +89,18 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
                 loadItemsFormDB(mytabs.getCurrentTab());
             }
         });
+
+        //sorting 하기
+       /* Collections.sort(items_lab, new Comparator<ListViewItem>(){
+            @Override
+            public int compare(ListViewItem o1, ListViewItem o2) {
+                int temp1= Integer.parseInt(o1.getLast_inst_num());
+                int temp2= Integer.parseInt(o2.getLast_inst_num());
+                if(temp1>temp2)return 1;
+                else if(temp1<temp2)return -1;
+                else return 0;
+            }
+        });*/
 
         //Adapter 생성
         //adapter_lab = new ListViewBtnAdapter(this, R.layout.list, items_lab, this);
@@ -114,7 +125,7 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
         DatabaseReference mRef;
         TextView textView;
         int cnt1=19;//# of lab
-        int cnt2=5;//# of insti
+        int cnt2=8;//# of insti
         int i=1;
         //탭 버튼에 따라 달라지게
         switch(index){
@@ -508,10 +519,6 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
                     items_insti.add(listViewItem);
                     i++;
                 }
-
-
-
-
             }break;
             default:{
                 Toast.makeText(this, "index error : "+index, Toast.LENGTH_SHORT).show();
@@ -520,20 +527,11 @@ public class MainActivity extends AppCompatActivity  implements ListViewBtnAdapt
        return  true;
     }
 
-    public void onbutton4Clicked(View v){
-        Intent intent = new Intent(getApplicationContext(), LabActivity.class);
-        startActivity(intent);
-    }
-
-    public void onbutton5Clicked(View v){
-        Intent intent = new Intent(getApplicationContext(), InstituteActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onListBtnClick(int position) {
-        Toast.makeText(this, Integer.toString(position+1)+"Item is selected", Toast.LENGTH_SHORT).show();
+
     }
+
 
 
 

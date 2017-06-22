@@ -143,6 +143,7 @@
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="goto"
                 android:text="보내기" />
 
 
@@ -153,6 +154,8 @@
             android:layout_height="wrap_content"
             android:text="2.구글 인증"
             android:textSize="20dp"/>
+
+
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/authbutton"
